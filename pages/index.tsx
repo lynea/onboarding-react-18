@@ -2,11 +2,12 @@ import { Box, Button, GridItem, Heading, Text } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import { Layout } from "../components/Layout";
 import styles from "../styles/Home.module.css";
 import { GrFormNextLink, GrFormPreviousLink } from "react-icons/gr";
 import { MdDone } from "react-icons/md";
-import { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 
 //www.test.nl?chapter=1&step=1 (check if user is eligable, auto load correct step)
 //www.test.nl/completed
@@ -141,6 +142,54 @@ const chapters: Chapter[] = [
   },
 ];
 
+type TeamCardProps = {
+  title: string;
+  subtitle: string;
+  body: string;
+  path: string;
+};
+
+const TeamCard: FunctionComponent<TeamCardProps> = ({
+  title,
+  body,
+  path,
+  subtitle,
+}) => (
+  <GridItem
+    color="white"
+    height="30rem"
+    maxW="sm"
+    borderRadius="lg"
+    display="flex"
+    flexDirection="column"
+    p="2rem"
+    colSpan={4}
+    border="2px solid white"
+  >
+    {/* <Image></Image> */}
+    <Text
+      bgGradient="linear(to-l, #7928CA, #FF0080)"
+      bgClip="text"
+      fontSize="5xl"
+      fontWeight="extrabold"
+    >
+      {title}
+    </Text>
+    <Text fontSize="3xl" color="purple" fontWeight="bold">
+      {subtitle}
+    </Text>
+    <Text fontSize="lg" color="white">
+      {body}
+    </Text>
+    <Link href={`/onboarding/${path}?chapter=1&step=1`} passHref>
+      <Button justifySelf="flex-end" colorScheme="purple">
+        {" "}
+        pick{" "}
+      </Button>
+    </Link>
+  </GridItem>
+);
+
 const Home: NextPage = () => {
   const currentStep = 0;
   const chapter: Chapter = chapters[0];
@@ -153,12 +202,28 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
+      <Box as="main" display="flex" justifyContent="center">
         <Layout>
-          <Chapter currentStep={currentStep} {...chapter} />
-          <Stepper></Stepper>
+          <TeamCard
+            title="turbo snails"
+            subtitle="sales"
+            body="lorem ipsum dolar sit"
+            path="sales"
+          />
+          <TeamCard
+            title="pro ducks"
+            subtitle="products"
+            body="lorem ipsum dolar sit"
+            path="products"
+          />
+          <TeamCard
+            title="busy bees"
+            subtitle="business"
+            body="lorem ipsum dolar sit"
+            path="business"
+          />
         </Layout>
-      </main>
+      </Box>
 
       <footer className={styles.footer}>
         <a
