@@ -22,21 +22,50 @@ import {
 
 import { FunctionComponent, ReactNode, useState } from "react";
 import { FcTodoList } from "react-icons/fc";
+import { useRecoilState } from "recoil";
+import { todosState } from "../state/todos";
 
 const TodoSelection = () => {
-  const [value, setValue] = useState("1");
+  const [todos, setTodos] = useRecoilState(todosState);
+
+  // const isAlreadyCompleted = (id:string) => todos.find((localTodo) => localTodo.id === id)?.completed;
+
+  const handleCheck = (e: any) => {
+    if (e.target.checked) {
+      const newLocalTodos = [...todos];
+
+      for (const todo of newLocalTodos) {
+        if (todo.id === e.target.value) {
+          setTodos(newLocalTodos);
+          break;
+        }
+      }
+    } else {
+      const filteredTodos = [...todos].filter(
+        (localTodo) => localTodo.id !== e.target.value
+      );
+
+      setTodos(filteredTodos);
+    }
+  };
   return (
     <>
       <Heading as="h5" size="sm" marginBottom="1rem">
         Getting started
       </Heading>
       <Stack spacing={5} direction="column">
-        <Checkbox colorScheme="green" defaultChecked>
-          Checkbox
-        </Checkbox>
-        <Checkbox colorScheme="green" defaultChecked>
-          Checkbox
-        </Checkbox>
+        {todos.length === 0 && <> no todos yet </>}
+        {todos.map((todo) => (
+          <Checkbox
+            value={todo.id}
+            onChange={handleCheck}
+            colorScheme="green"
+            defaultChecked={todo.completed}
+            key={todo.id}
+          >
+            {todo.title}
+          </Checkbox>
+        ))}
       </Stack>
       <Divider marginTop="1rem" />
     </>
@@ -79,7 +108,7 @@ export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <>
+    <Box minHeight="100vh" background="blackAlpha.900" width="1700px">
       <Box
         boxShadow="md"
         padding=" 0 2rem"
@@ -108,6 +137,6 @@ export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
       <Grid marginTop="7rem" w="100%" templateColumns="repeat(12, 1fr)" gap={4}>
         {children}
       </Grid>
-    </>
+    </Box>
   );
 };
