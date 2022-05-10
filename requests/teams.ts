@@ -1,4 +1,5 @@
 import { stringify } from "qs";
+import { GetTeamsResult } from "../types/cms";
 
 const query = stringify(
   {
@@ -28,7 +29,7 @@ const getTeams = async () => {
     const message = `An error has occured: ${response.status}`;
     throw new Error(message);
   }
-  const teams = await response.json();
+  const teams: GetTeamsResult = await response.json();
   return teams;
 };
 
