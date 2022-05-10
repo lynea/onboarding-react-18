@@ -3,8 +3,9 @@ import React, { FunctionComponent, useState } from "react";
 import { MdDone } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { useRecoilState } from "recoil";
-import { todosState } from "../../state/todos";
+import { Todo, todosState } from "../../state/todos";
 import { StepAttributes, Todos } from "../../types/cms";
+import * as stepperUtils from "../../utils/stepper";
 
 export const Step: FunctionComponent<StepAttributes> = ({
   body,
@@ -12,33 +13,31 @@ export const Step: FunctionComponent<StepAttributes> = ({
   todos,
 }) => {
   const [loading, setLoading] = useState(false);
-  const getAttributes = (todos: Todos) =>
-    todos.data.map((todo) => todo.attributes);
 
   const [localTodos, setTodos] = useRecoilState(todosState);
 
-  const todoAttributes = todos ? getAttributes(todos) : undefined;
+  //todo: refactor so we only pass current todo
+  const todoAttributes = todos
+    ? stepperUtils.getAttributes(todos.data)
+    : undefined;
 
   const todo = todos?.data[0]?.attributes;
 
+  const removeTodo = (todos: Todo[]) =>
+    [...todos].filter((localTodo) => localTodo.id !== todo.identifier);
+
   const submitTodo = () => {
+    //todo: refactor to hook because re-used on [teamname]
     const foundTodo = localTodos?.find(
       (localTodo) => localTodo.id === todo.identifier
     );
 
     if (foundTodo) {
       if (foundTodo?.completed) {
-        const filteredTodos = [...localTodos].filter(
-          (localTodo) => localTodo.id !== todo.identifier
-        );
-
-        setTodos(filteredTodos);
+        setTodos(removeTodo(localTodos));
       } else {
-        const filteredTodos = [...localTodos].filter(
-          (localTodo) => localTodo.id !== todo.identifier
-        );
         setTodos([
-          ...filteredTodos,
+          ...removeTodo(localTodos),
           { completed: true, title: todo.title, id: todo.identifier },
         ]);
       }
@@ -50,9 +49,13 @@ export const Step: FunctionComponent<StepAttributes> = ({
     }
 
     setLoading(true);
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setLoading(false);
     }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+    };
   };
 
   return (

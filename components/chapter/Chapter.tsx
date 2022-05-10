@@ -2,6 +2,7 @@ import { GridItem, Heading } from "@chakra-ui/react";
 import React, { FunctionComponent } from "react";
 import { StepAttributes } from "../../types/cms";
 import { Step } from "../step";
+import * as stepperUtils from "../../utils/stepper";
 
 import { ChapterProps } from "./types";
 
@@ -10,9 +11,10 @@ export const Chapter: FunctionComponent<ChapterProps> = ({
   steps,
   currentStep,
 }) => {
-  const stepInfo: StepAttributes = steps?.data?.map((step) => step.attributes)[
-    currentStep - 1
-  ];
+  const stepsAttributes: StepAttributes[] = stepperUtils.getAttributes(
+    steps?.data
+  );
+  const stepInfo = stepsAttributes.at(currentStep - 1);
 
   return (
     <GridItem
@@ -37,8 +39,7 @@ export const Chapter: FunctionComponent<ChapterProps> = ({
       >
         {title}
       </Heading>
-
-      <Step {...stepInfo} />
+      {stepInfo && <Step {...stepInfo} />}
     </GridItem>
   );
 };
