@@ -1,199 +1,19 @@
 import { Box, Button, GridItem, Heading, Text } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
 import { Layout } from "../components/Layout";
 import styles from "../styles/Home.module.css";
-import { GrFormNextLink, GrFormPreviousLink } from "react-icons/gr";
-import { MdDone } from "react-icons/md";
-import React, { FunctionComponent, useState } from "react";
+import Link from "next/link";
+import React from "react";
 
-//www.test.nl?chapter=1&step=1 (check if user is eligable, auto load correct step)
-//www.test.nl/completed
-//www.test.nl/recourses
+import dynamic from "next/dynamic";
 
-// chapters
-// steps
-// ive done it, ill do it later
-
-const Stepper = () => (
-  <GridItem
-    colSpan={12}
-    marginTop="2rem"
-    bg="white"
-    boxShadow="md"
-    p="6"
-    rounded="md"
-    display="flex"
-    justifyContent="space-between"
-  >
-    <Button
-      leftIcon={<GrFormPreviousLink />}
-      colorScheme="purple"
-      variant="outline"
-    >
-      Previous step
-    </Button>
-    <Box>
-      <Text fontSize="md">
-        <strong>chapter: </strong> well hello there
-      </Text>
-      <Text fontSize="md">
-        <strong>step: </strong> 1/6
-      </Text>
-    </Box>
-
-    <Button
-      rightIcon={<GrFormNextLink />}
-      colorScheme="purple"
-      variant="outline"
-    >
-      Next step
-    </Button>
-  </GridItem>
-);
-
-type Step = {
-  title: string;
-  body: string;
-  completable: boolean;
-  priority: number;
-};
-
-type Chapter = {
-  title: string;
-  steps: Step[];
-};
-
-type ChapterProps = Chapter & {
-  currentStep: number;
-};
-
-const Step: FunctionComponent<Step> = ({ body, title, completable }) => (
-  <>
-    <Heading as="h2" size="lg" marginBottom="2.5rem">
-      {title}
-    </Heading>
-    <Text fontSize="xl">{body}</Text>
-
-    {completable && (
-      <Button
-        marginTop="2rem"
-        w="fit-content"
-        alignSelf="center"
-        loadingText="Submitting"
-        colorScheme="teal"
-        variant="outline"
-        rightIcon={<MdDone />}
-      >
-        mark as completed
-      </Button>
-    )}
-  </>
-);
-
-//check which chapter it is and inject the steps default step is 1
-
-const Chapter: FunctionComponent<ChapterProps> = ({
-  title,
-  steps,
-  currentStep,
-}) => {
-  const step = steps[currentStep];
-
-  return (
-    <GridItem
-      colSpan={12}
-      bg="gray.100"
-      boxShadow="md"
-      p="6"
-      rounded="md"
-      display="flex"
-      justifyContent="space-between"
-      flexDirection="column"
-    >
-      <Heading as="h1" size="2xl" marginBottom="2.5rem">
-        {title}
-      </Heading>
-
-      <Step {...step} />
-    </GridItem>
-  );
-};
-
-const chapters: Chapter[] = [
-  {
-    title: "about mijndomein",
-    steps: [
-      {
-        completable: false,
-        title: "step1",
-        body: "hello there",
-        priority: 1,
-      },
-      {
-        completable: true,
-        title: "step2",
-        body: "hello there",
-        priority: 2,
-      },
-    ],
-  },
-];
-
-type TeamCardProps = {
-  title: string;
-  subtitle: string;
-  body: string;
-  path: string;
-};
-
-const TeamCard: FunctionComponent<TeamCardProps> = ({
-  title,
-  body,
-  path,
-  subtitle,
-}) => (
-  <GridItem
-    color="white"
-    height="30rem"
-    maxW="sm"
-    borderRadius="lg"
-    display="flex"
-    flexDirection="column"
-    p="2rem"
-    colSpan={4}
-    border="2px solid white"
-  >
-    {/* <Image></Image> */}
-    <Text
-      bgGradient="linear(to-l, #7928CA, #FF0080)"
-      bgClip="text"
-      fontSize="5xl"
-      fontWeight="extrabold"
-    >
-      {title}
-    </Text>
-    <Text fontSize="3xl" color="purple" fontWeight="bold">
-      {subtitle}
-    </Text>
-    <Text fontSize="lg" color="white">
-      {body}
-    </Text>
-    <Link href={`/onboarding/${path}?chapter=1&step=1`} passHref>
-      <Button justifySelf="flex-end" colorScheme="purple">
-        {" "}
-        pick{" "}
-      </Button>
-    </Link>
-  </GridItem>
-);
+const Spline = dynamic(() => import("@splinetool/react-spline"), {
+  ssr: false,
+  loading: () => <h1>loading...</h1>,
+});
 
 const Home: NextPage = () => {
-  const currentStep = 0;
-  const chapter: Chapter = chapters[0];
-
   return (
     <div className={styles.container}>
       <Head>
@@ -204,38 +24,49 @@ const Home: NextPage = () => {
 
       <Box as="main" display="flex" justifyContent="center">
         <Layout>
-          <TeamCard
-            title="turbo snails"
-            subtitle="sales"
-            body="lorem ipsum dolar sit"
-            path="sales"
-          />
-          <TeamCard
-            title="pro ducks"
-            subtitle="products"
-            body="lorem ipsum dolar sit"
-            path="products"
-          />
-          <TeamCard
-            title="busy bees"
-            subtitle="business"
-            body="lorem ipsum dolar sit"
-            path="business"
-          />
+          <GridItem
+            colSpan={12}
+            margin="0 2rem"
+            display="flex"
+            justifyContent="center"
+            textAlign="center"
+            flexDirection="column"
+          >
+            <Heading
+              as="h1"
+              fontSize="8rem"
+              marginBottom="2.5rem"
+              bgGradient="linear(to-l, #7928CA, #FF0080)"
+              fontWeight="extrabold"
+              bgClip="text"
+            >
+              My onboarding
+            </Heading>
+          </GridItem>
+          <GridItem colSpan={12} height="43rem">
+            <Spline scene="https://prod.spline.design/8-XX3fWBmbcS9if7/scene.splinecode" />
+          </GridItem>
+          <GridItem colStart={5} colEnd={9}>
+            <Link href="/onboarding">
+              <Button
+                w="100%"
+                size="lg"
+                fontWeight="bold"
+                fontSize="4xl"
+                py="2.5rem"
+                color="#F2F2F2"
+                bgColor="#7928CA"
+                _hover={{ bg: "#7928CA" }}
+              >
+                Start onboarding
+              </Button>
+            </Link>
+          </GridItem>
         </Layout>
       </Box>
 
       <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
+        Created with love by: Rene van Dijk
       </footer>
     </div>
   );

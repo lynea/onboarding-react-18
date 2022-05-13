@@ -64,7 +64,7 @@ export const Step: FunctionComponent<StepAttributes> = ({
         {title}
       </Heading>
 
-      <Box>
+      <Box minH="25rem" maxH="25rem" overflowY="scroll" scrollBehavior="smooth">
         <ReactMarkdown>{body}</ReactMarkdown>
       </Box>
 
