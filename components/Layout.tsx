@@ -36,11 +36,16 @@ const TodoSelection = () => {
         }
       }
     } else {
-      const filteredTodos = [...todos].filter(
-        (localTodo) => localTodo.id !== e.target.value
-      );
+      const updatedTodos = JSON.parse(JSON.stringify([...todos]));
 
-      setTodos(filteredTodos);
+      for (const todo of updatedTodos) {
+        if (todo.id === e.target.value) {
+          todo.completed = !todo.completed;
+          break;
+        }
+      }
+
+      setTodos(updatedTodos);
     }
   };
   return (

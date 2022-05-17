@@ -2,7 +2,7 @@ import { GridItem, Box, Heading } from "@chakra-ui/react";
 import React, { FunctionComponent } from "react";
 import Image from "next/image";
 
-type TeamBadgeProps = {
+export type TeamBadgeProps = {
   name: string;
   image: string;
   selected: boolean;

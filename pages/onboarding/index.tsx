@@ -2,25 +2,40 @@ import { Box, Button, GridItem, Heading, Text } from "@chakra-ui/react";
 
 import Head from "next/head";
 import { Layout } from "../../components/Layout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { NextPage } from "next";
 import Link from "next/link";
 
-import { TeamAttributes } from "../../types/cms";
+import { GetTeamsResult, Team, TeamAttributes } from "../../types/cms";
 
-import { TeamBadge } from "../../components/teamBadge";
+import { TeamBadgeProps } from "../../components/teamBadge/Teambadge";
+import dynamic from "next/dynamic";
 
-type HomepageProps = {
+const TeamBadge = dynamic<TeamBadgeProps>(
+  () => import("../../components/teamBadge").then((module) => module.TeamBadge),
+  { ssr: false }
+);
+import { getTeams } from "../../requests/teams";
+
+type TeamspageProps = {
   teams: TeamAttributes[];
 };
 
-const Home: NextPage<HomepageProps> = () => {
-  const [selectedTeam, setSelectedTeam] = useState<string | undefined>();
+const Teams: NextPage<TeamspageProps> = ({ teams }) => {
+  const [selectedTeam, setSelectedTeam] = useState<string | undefined>(
+    undefined
+  );
+  const [description, setDescription] = useState<string | undefined>();
 
   const handleTeamClick = (id: string) => {
     setSelectedTeam(id);
   };
+
+  useEffect(() => {
+    const currentTeam = teams.find((team) => team.name === selectedTeam);
+    setDescription(currentTeam?.description);
+  }, [selectedTeam]);
 
   return (
     <div>
@@ -51,28 +66,20 @@ const Home: NextPage<HomepageProps> = () => {
               The teams
             </Heading>
           </GridItem>
-          <TeamBadge
-            image="/snail.jpg"
-            name="Turbo snails"
-            selected={selectedTeam === "sales"}
-            onClick={handleTeamClick}
-            identifier="sales"
-          />
-          <TeamBadge
-            image="/snail.jpg"
-            name="Pro ducks"
-            selected={selectedTeam === "products"}
-            onClick={handleTeamClick}
-            identifier="products"
-          />
-          <TeamBadge
-            selected={selectedTeam === "busines"}
-            image="/snail.jpg"
-            name="busy bees"
-            onClick={handleTeamClick}
-            identifier="busines"
-          />
+
+          {teams.map((team) => (
+            <TeamBadge
+              key={team.slug}
+              image={`${process.env.NEXT_PUBLIC_STRAPI_BASE_URL}${team.badgeImage.data.attributes.formats.thumbnail.url}`}
+              name={team.name}
+              selected={selectedTeam === team.name}
+              onClick={handleTeamClick}
+              identifier={team.name}
+            />
+          ))}
+
           <GridItem
+            visibility={description ? "visible" : "hidden"}
             colSpan={12}
             rounded="lg"
             background="#31203F"
@@ -81,18 +88,10 @@ const Home: NextPage<HomepageProps> = () => {
             my="4rem"
           >
             <Text fontSize="lg" fontWeight="bold">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Sapien
-              et ligula ullamcorper malesuada proin libero nunc consequat. Eget
-              magna fermentum iaculis eu non diam phasellus vestibulum. Libero
-              id faucibus nisl tincidunt eget. Est ullamcorper eget nulla
-              facilisi etiam dignissim diam quis enim. At in tellus integer
-              feugiat scelerisque varius morbi. Vitae purus faucibus ornare
-              suspendisse sed nisi lacus sed. Purus gravida quis blandit turpis
-              cursus. Hac habitasse platea dictumst vestibulum rhoncus. Sed
-              risus ultricies tristique nulla aliquet enim tortor.
+              {description}
             </Text>
           </GridItem>
+
           <GridItem colStart={5} colEnd={9}>
             <Link href={`/onboarding/${selectedTeam}?chapter=1&step=1`}>
               <Button
@@ -118,4 +117,17 @@ const Home: NextPage<HomepageProps> = () => {
   );
 };
 
-export default Home;
+export async function getStaticProps() {
+  const teams: GetTeamsResult = await getTeams();
+
+  const getAttributes = (result: GetTeamsResult): TeamAttributes[] =>
+    result.data.map((team: Team) => team.attributes);
+
+  return {
+    props: {
+      teams: getAttributes(teams),
+    },
+  };
+}
+
+export default Teams;
