@@ -12,6 +12,8 @@
     "@chakra-ui/react": "2.0.0-next.2",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
+    "@splinetool/react-spline": "^2.2.1",
+    "@splinetool/runtime": "^0.9.50",
     "@types/qs": "^6.9.7",
     "babel-plugin-superjson-next": "^0.4.3",
     "framer-motion": "^6.3.3",

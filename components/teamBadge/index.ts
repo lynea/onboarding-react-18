@@ -1,0 +1,1 @@
+export { TeamBadge } from "./Teambadge";

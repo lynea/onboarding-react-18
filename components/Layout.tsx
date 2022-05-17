@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Checkbox,
   Divider,
   Drawer,
@@ -11,12 +10,8 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Grid,
-  GridItem,
   Heading,
   IconButton,
-  Input,
-  Radio,
-  RadioGroup,
   Stack,
 } from "@chakra-ui/react";
 
@@ -41,11 +36,16 @@ const TodoSelection = () => {
         }
       }
     } else {
-      const filteredTodos = [...todos].filter(
-        (localTodo) => localTodo.id !== e.target.value
-      );
+      const updatedTodos = JSON.parse(JSON.stringify([...todos]));
 
-      setTodos(filteredTodos);
+      for (const todo of updatedTodos) {
+        if (todo.id === e.target.value) {
+          todo.completed = !todo.completed;
+          break;
+        }
+      }
+
+      setTodos(updatedTodos);
     }
   };
   return (
@@ -80,7 +80,7 @@ type SidePanelProps = {
 const SidePanel: FunctionComponent<SidePanelProps> = ({ isOpen, onClose }) => (
   <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
     <DrawerOverlay />
-    <DrawerContent>
+    <DrawerContent background="#31203F" color="gray.100">
       <DrawerCloseButton />
       <DrawerHeader fontWeight="bold" fontSize="2xl">
         To do
@@ -90,9 +90,7 @@ const SidePanel: FunctionComponent<SidePanelProps> = ({ isOpen, onClose }) => (
         <TodoSelection />
       </DrawerBody>
 
-      <DrawerFooter>
-        <Button colorScheme="blue">Save</Button>
-      </DrawerFooter>
+      <DrawerFooter></DrawerFooter>
     </DrawerContent>
   </Drawer>
 );
@@ -108,11 +106,10 @@ export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <Box minHeight="100vh" background="blackAlpha.900" width="1700px">
+    <Box minHeight="100vh" width="1700px">
       <Box
         boxShadow="md"
         padding=" 0 2rem"
-        bg="white"
         w="100%"
         h="5rem"
         position="fixed"
@@ -122,11 +119,11 @@ export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
         alignItems="center"
         display="flex"
       >
-        <Heading as="h2" size="lg">
+        <Heading as="h2" size="lg" color="gray.100">
           Mijn onboarding
         </Heading>
         <IconButton
-          colorScheme="purple"
+          colorScheme="whiteAlpha"
           aria-label="Search database"
           icon={<FcTodoList />}
           onClick={handleSideBar}
@@ -134,7 +131,12 @@ export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
       </Box>
 
       <SidePanel isOpen={sidePanelIsOpen} onClose={handleSideBar} />
-      <Grid marginTop="7rem" w="100%" templateColumns="repeat(12, 1fr)" gap={4}>
+      <Grid
+        marginTop="7rem"
+        w="100%"
+        templateColumns="repeat(12, 1fr)"
+        gap={12}
+      >
         {children}
       </Grid>
     </Box>

@@ -16,6 +16,8 @@ export interface TeamAttributes {
   publishedAt: string;
   alias: string;
   chapters: Chapters;
+  badgeImage: any;
+  description: string;
 }
 
 export interface Chapters {
