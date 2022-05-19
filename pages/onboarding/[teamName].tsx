@@ -1,4 +1,13 @@
-import { Box } from "@chakra-ui/react";
+import {
+  Box,
+  color,
+  Grid,
+  GridItem,
+  Heading,
+  useTheme,
+} from "@chakra-ui/react";
+
+import Image from "next/image";
 
 import Head from "next/head";
 import { Layout } from "../../components/Layout";
@@ -11,7 +20,9 @@ import { todosState } from "../../state/todos";
 import { Chapter } from "../../components/chapter";
 import { Stepper } from "../../components/stepper";
 import {
+  Chapters,
   ChaptersAttributes,
+  GetChapterResponse,
   GetTeamsResult,
   StepAttributes,
   Team,
@@ -19,9 +30,11 @@ import {
 } from "../../types/cms";
 
 import * as stepperUtils from "../../utils/stepper";
+import { getChapters } from "../../requests/chapters";
 
 type HomepageProps = {
   teams: TeamAttributes[];
+  globalChapters: ChaptersAttributes[];
 };
 
 const Home: NextPage<HomepageProps> = ({ teams }) => {
@@ -43,6 +56,7 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
     teamName
   );
 
+  //remove the global chapters
   const chapters: ChaptersAttributes[] | undefined = stepperUtils.getAttributes(
     currentTeam?.chapters?.data ?? []
   );
@@ -128,7 +142,28 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
 
       <Box as="main" display="flex" justifyContent="center">
         <Layout>
-          <Chapter currentStep={numStep} {...currentChapterInfo} />
+          <GridItem colSpan={12}>
+            <Grid
+              templateColumns="repeat(12, 1fr)"
+              templateRows="100px 100px 100px 100px 100px"
+            >
+              <GridItem colStart={2} colEnd={12} rowStart={1} rowEnd={6}>
+                <Chapter currentStep={numStep} {...currentChapterInfo} />
+              </GridItem>
+              <GridItem
+                rounded="md"
+                overflow="hidden"
+                colStart={1}
+                colEnd={4}
+                rowStart={2}
+                rowEnd={5}
+                position="relative"
+              >
+                <Image src="/snail.jpg" layout="fill"></Image>
+              </GridItem>
+            </Grid>
+          </GridItem>
+
           <Stepper
             chapterCount={{
               current: Number(chapter),
@@ -151,13 +186,15 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
 
 export async function getStaticProps() {
   const teams: GetTeamsResult = await getTeams();
+  const chapters: GetChapterResponse = await getChapters();
 
-  const getAttributes = (result: GetTeamsResult): TeamAttributes[] =>
-    result.data.map((team: Team) => team.attributes);
+  const getAttributes = (result: any): [] =>
+    result.data.map((item: Team) => item.attributes);
 
   return {
     props: {
       teams: getAttributes(teams),
+      globalChapters: getAttributes(chapters),
     },
   };
 }

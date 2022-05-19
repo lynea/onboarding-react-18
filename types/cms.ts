@@ -1,3 +1,8 @@
+export interface GetChapterResponse {
+  data: Chapters;
+  meta: Meta;
+}
+
 export interface GetTeamsResult {
   data: Team[];
   meta: Meta;
@@ -36,6 +41,7 @@ export interface ChaptersAttributes {
   updatedAt: string;
   publishedAt: string;
   steps: Steps;
+  global: boolean;
 }
 
 export interface Steps {

@@ -1,5 +1,7 @@
 import {
   Box,
+  Button,
+  ButtonGroup,
   Checkbox,
   Divider,
   Drawer,
@@ -12,13 +14,27 @@ import {
   Grid,
   Heading,
   IconButton,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
   Stack,
 } from "@chakra-ui/react";
 
-import { FunctionComponent, ReactNode, useState } from "react";
+import React, {
+  FunctionComponent,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 import { FcTodoList } from "react-icons/fc";
 import { useRecoilState } from "recoil";
 import { todosState } from "../state/todos";
+import Link from "next/link";
 
 const TodoSelection = () => {
   const [todos, setTodos] = useRecoilState(todosState);
@@ -26,27 +42,38 @@ const TodoSelection = () => {
   // const isAlreadyCompleted = (id:string) => todos.find((localTodo) => localTodo.id === id)?.completed;
 
   const handleCheck = (e: any) => {
-    if (e.target.checked) {
-      const newLocalTodos = [...todos];
+    const updatedTodos = JSON.parse(JSON.stringify([...todos]));
 
-      for (const todo of newLocalTodos) {
-        if (todo.id === e.target.value) {
-          setTodos(newLocalTodos);
-          break;
-        }
+    for (const todo of updatedTodos) {
+      if (todo.id === e.target.value) {
+        todo.completed = !todo.completed;
+        break;
       }
-    } else {
-      const updatedTodos = JSON.parse(JSON.stringify([...todos]));
-
-      for (const todo of updatedTodos) {
-        if (todo.id === e.target.value) {
-          todo.completed = !todo.completed;
-          break;
-        }
-      }
-
-      setTodos(updatedTodos);
     }
+
+    setTodos(updatedTodos);
+    // if (e.target.checked) {
+    //   const updatedTodos = JSON.parse(JSON.stringify([...todos]));
+
+    //   for (const todo of updatedTodos) {
+    //     if (todo.id === e.target.value) {
+    //       todo.completed = !todo.completed;
+    //       break;
+    //     }
+    //   }
+    //   setTodos(updatedTodos);
+    // } else {
+    //   const updatedTodos = JSON.parse(JSON.stringify([...todos]));
+
+    //   for (const todo of updatedTodos) {
+    //     if (todo.id === e.target.value) {
+    //       todo.completed = !todo.completed;
+    //       break;
+    //     }
+    //   }
+
+    //   setTodos(updatedTodos);
+    // }
   };
   return (
     <>
@@ -101,12 +128,21 @@ type LayoutProps = {
 
 export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
   const [sidePanelIsOpen, setSidepanelIsOpen] = useState(false);
+  const [shouldSeetips, setShouldSeeTips] = useState(false);
   const handleSideBar = () => {
     setSidepanelIsOpen(!sidePanelIsOpen);
   };
 
+  useEffect(() => {
+    let timer = setTimeout(() => setShouldSeeTips(true), 1000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
-    <Box minHeight="100vh" width="1700px">
+    <Box minHeight="100vh" width="1700px" display="flex" alignItems="center">
       <Box
         boxShadow="md"
         padding=" 0 2rem"
@@ -120,18 +156,38 @@ export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
         display="flex"
       >
         <Heading as="h2" size="lg" color="gray.100">
-          Mijn onboarding
+          <Link href="/">Mijn onboarding</Link>
         </Heading>
-        <IconButton
-          colorScheme="whiteAlpha"
-          aria-label="Search database"
-          icon={<FcTodoList />}
-          onClick={handleSideBar}
-        />
+
+        <Popover
+          returnFocusOnClose={false}
+          isOpen={shouldSeetips}
+          onClose={() => {
+            setShouldSeeTips(false);
+          }}
+          placement="top"
+          closeOnBlur={false}
+        >
+          <PopoverTrigger>
+            <IconButton
+              colorScheme="secondary"
+              aria-label="Search database"
+              icon={<FcTodoList />}
+              onClick={handleSideBar}
+            />
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverHeader fontWeight="semibold">Tip:</PopoverHeader>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverBody>you can view your todos here</PopoverBody>
+          </PopoverContent>
+        </Popover>
       </Box>
 
       <SidePanel isOpen={sidePanelIsOpen} onClose={handleSideBar} />
       <Grid
+        rowGap={0}
         marginTop="7rem"
         w="100%"
         templateColumns="repeat(12, 1fr)"

@@ -1,4 +1,4 @@
-import { Heading, Box, Button } from "@chakra-ui/react";
+import { Heading, Box, Button, Grid } from "@chakra-ui/react";
 import React, { FunctionComponent, useState } from "react";
 import { MdDone } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
@@ -60,11 +60,18 @@ export const Step: FunctionComponent<StepAttributes> = ({
 
   return (
     <>
-      <Heading as="h2" size="lg" marginBottom="2.5rem">
+      <Heading as="h2" size="lg" marginBottom="2.5rem" color="gray.100">
         {title}
       </Heading>
 
-      <Box minH="25rem" maxH="25rem" overflowY="scroll" scrollBehavior="smooth">
+      <Box
+        maxH="25rem"
+        overflowY="scroll"
+        fontSize="1.2rem"
+        scrollBehavior="smooth"
+        fontWeight="medium"
+        pr="1rem"
+      >
         <ReactMarkdown>{body}</ReactMarkdown>
       </Box>
 
@@ -72,6 +79,7 @@ export const Step: FunctionComponent<StepAttributes> = ({
         <Button
           marginTop="2rem"
           w="fit-content"
+          py="1rem"
           alignSelf="center"
           loadingText="Submitting"
           isLoading={loading}

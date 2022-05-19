@@ -17,6 +17,7 @@ const TeamBadge = dynamic<TeamBadgeProps>(
   { ssr: false }
 );
 import { getTeams } from "../../requests/teams";
+import { getChapters } from "../../requests/chapters";
 
 type TeamspageProps = {
   teams: TeamAttributes[];
@@ -101,9 +102,9 @@ const Teams: NextPage<TeamspageProps> = ({ teams }) => {
                 fontSize="4xl"
                 py="2.5rem"
                 color="#F2F2F2"
-                bgColor="#7928CA"
+                colorScheme="secondary"
                 disabled={!selectedTeam}
-                _hover={{ bg: "#7928CA" }}
+                // _hover={{ bg: "#7928CA" }}
               >
                 continue
               </Button>
