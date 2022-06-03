@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
 import { NextPage } from "next";
 import { getTeams } from "../../requests/teams";
 import { useRecoilState } from "recoil";
-import { todosState } from "../../state/todos";
+import { Todo, todosState } from "../../state/todos";
 import { Chapter } from "../../components/chapter";
 import { Stepper } from "../../components/stepper";
 import {
@@ -44,6 +44,7 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
   const { step, chapter, teamName } = router.query;
 
   const numStep = Number(step);
+  const numChapter = Number(chapter);
 
   const newTeams = [...teams];
 
@@ -80,16 +81,17 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
 
   const isFirstStep = () => numStep === 1;
   const isLastStep = () => currentChapterInfo.steps.data.length === numStep;
+  const steps = stepperUtils.getAttributes(
+    currentChapterInfo?.steps?.data ?? []
+  );
+  const currentStep: StepAttributes | undefined = steps.at(numStep - 1);
+
+  const stepHasImage = !!currentStep?.image?.data;
 
   const isInLocalStore = (id: string) =>
-    localTodos?.some((localTodo) => localTodo.id === id);
+    localTodos?.some((localTodo: Todo) => localTodo.id === id);
 
   const handleNextStep = () => {
-    const steps = stepperUtils.getAttributes(
-      currentChapterInfo?.steps?.data ?? []
-    );
-    const currentStep: StepAttributes | undefined = steps.at(numStep - 1);
-
     const todo = currentStep?.todos?.data?.at(0)?.attributes;
 
     if (todo && localTodos && !isInLocalStore(todo.identifier)) {
@@ -148,19 +150,31 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
               templateRows="100px 100px 100px 100px 100px"
             >
               <GridItem colStart={2} colEnd={12} rowStart={1} rowEnd={6}>
-                <Chapter currentStep={numStep} {...currentChapterInfo} />
+                <Chapter
+                  currentChapter={numChapter}
+                  currentStep={numStep}
+                  {...currentChapterInfo}
+                  imageMode={stepHasImage}
+                />
               </GridItem>
-              <GridItem
-                rounded="md"
-                overflow="hidden"
-                colStart={1}
-                colEnd={4}
-                rowStart={2}
-                rowEnd={5}
-                position="relative"
-              >
-                <Image src="/snail.jpg" layout="fill"></Image>
-              </GridItem>
+              {stepHasImage && (
+                <GridItem
+                  rounded="md"
+                  overflow="hidden"
+                  colStart={1}
+                  colEnd={4}
+                  rowStart={2}
+                  rowEnd={5}
+                  position="relative"
+                >
+                  <Image
+                    priority
+                    src={`http://127.0.0.1:1337${currentStep?.image?.data?.attributes?.formats?.small?.url}`}
+                    layout="fill"
+                    objectFit="cover"
+                  />
+                </GridItem>
+              )}
             </Grid>
           </GridItem>
 

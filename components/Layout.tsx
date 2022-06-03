@@ -33,13 +33,12 @@ import React, {
 } from "react";
 import { FcTodoList } from "react-icons/fc";
 import { useRecoilState } from "recoil";
-import { todosState } from "../state/todos";
+import { Todo, todosState } from "../state/todos";
+import { hasSeen as hasSeenState } from "../state/user";
 import Link from "next/link";
 
 const TodoSelection = () => {
   const [todos, setTodos] = useRecoilState(todosState);
-
-  // const isAlreadyCompleted = (id:string) => todos.find((localTodo) => localTodo.id === id)?.completed;
 
   const handleCheck = (e: any) => {
     const updatedTodos = JSON.parse(JSON.stringify([...todos]));
@@ -52,37 +51,15 @@ const TodoSelection = () => {
     }
 
     setTodos(updatedTodos);
-    // if (e.target.checked) {
-    //   const updatedTodos = JSON.parse(JSON.stringify([...todos]));
-
-    //   for (const todo of updatedTodos) {
-    //     if (todo.id === e.target.value) {
-    //       todo.completed = !todo.completed;
-    //       break;
-    //     }
-    //   }
-    //   setTodos(updatedTodos);
-    // } else {
-    //   const updatedTodos = JSON.parse(JSON.stringify([...todos]));
-
-    //   for (const todo of updatedTodos) {
-    //     if (todo.id === e.target.value) {
-    //       todo.completed = !todo.completed;
-    //       break;
-    //     }
-    //   }
-
-    //   setTodos(updatedTodos);
-    // }
   };
   return (
     <>
       <Heading as="h5" size="sm" marginBottom="1rem">
-        Getting started
+        Your todos
       </Heading>
       <Stack spacing={5} direction="column">
         {todos.length === 0 && <> no todos yet </>}
-        {todos.map((todo) => (
+        {todos.map((todo: Todo) => (
           <Checkbox
             value={todo.id}
             onChange={handleCheck}
@@ -128,23 +105,14 @@ type LayoutProps = {
 
 export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
   const [sidePanelIsOpen, setSidepanelIsOpen] = useState(false);
-  const [shouldSeetips, setShouldSeeTips] = useState(false);
+  const [hasSeen, setHasSeen] = useRecoilState(hasSeenState);
   const handleSideBar = () => {
     setSidepanelIsOpen(!sidePanelIsOpen);
   };
 
-  useEffect(() => {
-    let timer = setTimeout(() => setShouldSeeTips(true), 1000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
-
   return (
     <Box minHeight="100vh" width="1700px" display="flex" alignItems="center">
       <Box
-        boxShadow="md"
         padding=" 0 2rem"
         w="100%"
         h="5rem"
@@ -161,9 +129,9 @@ export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
 
         <Popover
           returnFocusOnClose={false}
-          isOpen={shouldSeetips}
+          isOpen={hasSeen.modal && !hasSeen.todoTip}
           onClose={() => {
-            setShouldSeeTips(false);
+            setHasSeen({ modal: true, todoTip: true });
           }}
           placement="top"
           closeOnBlur={false}

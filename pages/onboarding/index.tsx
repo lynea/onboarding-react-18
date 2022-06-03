@@ -71,7 +71,7 @@ const Teams: NextPage<TeamspageProps> = ({ teams }) => {
           {teams.map((team) => (
             <TeamBadge
               key={team.slug}
-              image={`${process.env.NEXT_PUBLIC_STRAPI_BASE_URL}${team.badgeImage.data.attributes.formats.thumbnail.url}`}
+              image={`http://127.0.0.1:1337${team.badgeImage.data.attributes.formats.thumbnail.url}`}
               name={team.name}
               selected={selectedTeam === team.name}
               onClick={handleTeamClick}

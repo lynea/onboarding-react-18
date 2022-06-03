@@ -11,6 +11,8 @@ export const Chapter: FunctionComponent<ChapterProps> = ({
   title,
   steps,
   currentStep,
+  currentChapter,
+  imageMode,
 }) => {
   const stepsAttributes: StepAttributes[] = stepperUtils.getAttributes(
     steps?.data
@@ -22,11 +24,11 @@ export const Chapter: FunctionComponent<ChapterProps> = ({
       margin="0 2rem"
       boxShadow="md"
       color="gray.100"
-      p="2rem 2rem 2rem 20rem"
+      p={imageMode ? "2rem 2rem 2rem 20rem" : "2rem 2rem 2rem 2rem"}
       bg="secondary.800"
       rounded="md"
       display="flex"
-      justifyContent="space-between"
+      justifyContent="flex-start"
       flexDirection="column"
       h="100%"
     >
@@ -38,7 +40,7 @@ export const Chapter: FunctionComponent<ChapterProps> = ({
         fontWeight="extrabold"
         bgClip="text"
       >
-        {title}
+        Chapter {currentChapter} : {title}
       </Heading>
       {stepInfo && <Step {...stepInfo} />}
     </Box>

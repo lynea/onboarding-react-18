@@ -62,6 +62,7 @@ export interface StepAttributes {
   updatedAt: string;
   publishedAt: string;
   todos: Todos;
+  image: any;
 }
 
 export interface Todos {

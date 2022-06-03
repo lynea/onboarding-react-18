@@ -8,4 +8,6 @@ export type IChapter = {
 
 export type ChapterProps = ChaptersAttributes & {
   currentStep: number;
+  currentChapter: number;
+  imageMode: boolean;
 };

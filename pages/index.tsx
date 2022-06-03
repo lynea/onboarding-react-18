@@ -20,9 +20,12 @@ import Image from "next/image";
 import { Layout } from "../components/Layout";
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
-import React, { lazy, Suspense, useState } from "react";
+import React, { useState } from "react";
+import { AiFillHeart } from "react-icons/ai";
+import { hasSeen as hasSeenState } from "../state/user";
 
 import dynamic from "next/dynamic";
+import { useRecoilState } from "recoil";
 
 const Spline = dynamic(() => import("@splinetool/react-spline"), {
   ssr: false,
@@ -30,11 +33,13 @@ const Spline = dynamic(() => import("@splinetool/react-spline"), {
 // const Spline = React.lazy(() => import("@splinetool/react-spline"));
 
 const Home: NextPage = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [isLoading, setIsloading] = useState(true);
+  const [hasSeen, setHasSeen] = useRecoilState(hasSeenState);
 
   const handleClose = () => {
     setIsOpen(false);
+    setHasSeen({ modal: true, todoTip: false });
   };
 
   return (
@@ -45,25 +50,27 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Modal isOpen={isOpen} onClose={handleClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Welcome to Mijndomein</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            This application was developed as a hobby project by some of our
-            developers and is currently in alfa, if you experience any
-            difficulty or if you have tips on how we can improve the onboarding
-            please let us know
-          </ModalBody>
+      {!hasSeen?.modal && (
+        <Modal isOpen={isOpen} onClose={handleClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Welcome to Mijndomein</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              This application was developed as a hobby project by some of our
+              developers and is currently in alfa, if you experience any
+              difficulty or if you have tips on how we can improve the
+              onboarding please let us know
+            </ModalBody>
 
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleClose}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={handleClose}>
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
 
       <Box as="main" display="flex" justifyContent="center">
         <Layout>
@@ -118,9 +125,16 @@ const Home: NextPage = () => {
         </Layout>
       </Box>
 
-      <footer className={styles.footer}>
-        Created with love by: Rene van Dijk
-      </footer>
+      <Box as="footer" marginTop="4rem" className={styles.footer}>
+        Created with{" "}
+        {
+          <span style={{ padding: "0 0.5rem", color: "red" }}>
+            {" "}
+            <AiFillHeart></AiFillHeart>
+          </span>
+        }{" "}
+        by: Rene van Dijk
+      </Box>
     </div>
   );
 };

@@ -2,6 +2,9 @@ import { Heading, Box, Button, Grid } from "@chakra-ui/react";
 import React, { FunctionComponent, useState } from "react";
 import { MdDone } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { dracula } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { useRecoilState } from "recoil";
 import { Todo, todosState } from "../../state/todos";
 import { StepAttributes, Todos } from "../../types/cms";
@@ -29,7 +32,7 @@ export const Step: FunctionComponent<StepAttributes> = ({
   const submitTodo = () => {
     //todo: refactor to hook because re-used on [teamname]
     const foundTodo = localTodos?.find(
-      (localTodo) => localTodo.id === todo.identifier
+      (localTodo: Todo) => localTodo.id === todo.identifier
     );
 
     if (foundTodo) {
@@ -58,6 +61,17 @@ export const Step: FunctionComponent<StepAttributes> = ({
     };
   };
 
+  const newTheme = {
+    code: (props) => {
+      const { children } = props;
+      return (
+        <SyntaxHighlighter language="javascript" style={dracula}>
+          {children}
+        </SyntaxHighlighter>
+      );
+    },
+  };
+
   return (
     <>
       <Heading as="h2" size="lg" marginBottom="2.5rem" color="gray.100">
@@ -72,7 +86,11 @@ export const Step: FunctionComponent<StepAttributes> = ({
         fontWeight="medium"
         pr="1rem"
       >
-        <ReactMarkdown>{body}</ReactMarkdown>
+        <ReactMarkdown
+          components={ChakraUIRenderer(newTheme)}
+          children={body}
+          skipHtml
+        />
       </Box>
 
       {todoAttributes && todoAttributes?.length > 0 && (
@@ -84,8 +102,9 @@ export const Step: FunctionComponent<StepAttributes> = ({
           loadingText="Submitting"
           isLoading={loading}
           colorScheme={
-            localTodos?.find((localTodo) => localTodo.id === todo.identifier)
-              ?.completed
+            localTodos?.find(
+              (localTodo: Todo) => localTodo.id === todo.identifier
+            )?.completed
               ? "red"
               : "green"
           }
@@ -93,8 +112,9 @@ export const Step: FunctionComponent<StepAttributes> = ({
           rightIcon={<MdDone />}
           onClick={() => submitTodo()}
         >
-          {localTodos?.find((localTodo) => localTodo.id === todo.identifier)
-            ?.completed
+          {localTodos?.find(
+            (localTodo: Todo) => localTodo.id === todo.identifier
+          )?.completed
             ? "mark as uncompleted"
             : "mark as completed"}
         </Button>
