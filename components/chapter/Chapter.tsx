@@ -17,7 +17,13 @@ export const Chapter: FunctionComponent<ChapterProps> = ({
   const stepsAttributes: StepAttributes[] = stepperUtils.getAttributes(
     steps?.data
   );
-  const stepInfo = stepsAttributes.at(currentStep - 1);
+  const stepInfo = stepsAttributes?.at(currentStep - 1);
+
+  // if the user completed his yourney
+  // show a popup notifying that we will only show steps with open remaining todos
+  // filter out all chapters that are completed or dont have todos
+  // filter out all steps that have open todos
+  // we get all completed steps (for this chapter)
 
   return (
     <Box

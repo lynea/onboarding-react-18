@@ -18,6 +18,7 @@
     "babel-plugin-superjson-next": "^0.4.3",
     "chakra-ui-markdown-renderer": "^4.0.0",
     "framer-motion": "^6.3.3",
+    "lottie-react": "^2.2.1",
     "next": "12.1.5",
     "next-auth": "^4.3.4",
     "qs": "^6.10.3",

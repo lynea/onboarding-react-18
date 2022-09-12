@@ -9,6 +9,10 @@ import {
 } from "@chakra-ui/react";
 import React, { FunctionComponent } from "react";
 import { GrFormPreviousLink, GrFormNextLink } from "react-icons/gr";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { todoInfo, todosState } from "../../state/todos";
+import { hasCompleted as hasCompletedState } from "../../state/user";
+import { hasSeenAllSteps as hasSeenAllStepsState } from "../../state/user";
 import { StepperProps } from "./types";
 
 export const Stepper: FunctionComponent<StepperProps> = ({
@@ -18,6 +22,23 @@ export const Stepper: FunctionComponent<StepperProps> = ({
   chapterCount,
 }) => {
   const theme = useTheme();
+  const [hasCompleted, setHasCompleted] = useRecoilState(hasCompletedState);
+  const todoInfoState = useRecoilValue(todoInfo);
+  const [hasSeenAllSteps, setHasSeenAllSteps] =
+    useRecoilState(hasSeenAllStepsState);
+
+  const isLastStepAndChapter =
+    chapterCount.current === chapterCount.total &&
+    stepCount.current === stepCount.total;
+
+  const handleNextClick = () => {
+    if (isLastStepAndChapter) {
+      setHasSeenAllSteps(true);
+      onNextClick();
+    } else {
+      onNextClick();
+    }
+  };
 
   return (
     <GridItem
@@ -61,13 +82,10 @@ export const Stepper: FunctionComponent<StepperProps> = ({
           colorScheme="secondary"
           color="gray.100"
           variant="solid"
-          onClick={onNextClick}
-          disabled={
-            chapterCount.current === chapterCount.total &&
-            stepCount.current === stepCount.total
-          }
+          onClick={handleNextClick}
+          disabled={hasCompleted && isLastStepAndChapter}
         >
-          Next step
+          {isLastStepAndChapter && hasCompleted ? "finish" : "Next step"}
         </Button>
       </Flex>
     </GridItem>

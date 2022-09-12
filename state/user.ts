@@ -6,12 +6,25 @@ const { persistAtom } = recoilPersist();
 type hasSeen = {
   modal: boolean;
   todoTip: boolean;
+  openTodosModal: boolean;
 };
 
-const hasSeen = atom({
-  key: "isFirstVisit",
-  default: { modal: false, todoTip: false } as hasSeen,
+const hasCompleted = atom({
+  key: "hasCompleted",
+  default: false as boolean,
   effects_UNSTABLE: [persistAtom],
 });
 
-export { hasSeen };
+const hasSeenAllSteps = atom({
+  key: "hasSeenAllSteps",
+  default: false as boolean,
+  effects_UNSTABLE: [persistAtom],
+});
+
+const hasSeen = atom({
+  key: "isFirstVisit",
+  default: { modal: false, todoTip: false, openTodosModal: false } as hasSeen,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export { hasSeen, hasCompleted, hasSeenAllSteps };

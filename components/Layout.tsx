@@ -37,6 +37,28 @@ import { Todo, todosState } from "../state/todos";
 import { hasSeen as hasSeenState } from "../state/user";
 import Link from "next/link";
 
+type TodoProps = Todo & {
+  handleCheck: (e: any) => void;
+};
+
+const TodoItem: FunctionComponent<TodoProps> = ({
+  completed,
+  title,
+  id,
+  handleCheck,
+}) => (
+  <Box>
+    <Checkbox
+      value={id}
+      onChange={handleCheck}
+      colorScheme="green"
+      defaultChecked={completed}
+    >
+      {title}
+    </Checkbox>
+  </Box>
+);
+
 const TodoSelection = () => {
   const [todos, setTodos] = useRecoilState(todosState);
 
@@ -60,15 +82,13 @@ const TodoSelection = () => {
       <Stack spacing={5} direction="column">
         {todos.length === 0 && <> no todos yet </>}
         {todos.map((todo: Todo) => (
-          <Checkbox
-            value={todo.id}
-            onChange={handleCheck}
-            colorScheme="green"
-            defaultChecked={todo.completed}
+          <TodoItem
+            completed={todo.completed}
+            handleCheck={handleCheck}
+            title={todo.title}
+            id={todo.id}
             key={todo.id}
-          >
-            {todo.title}
-          </Checkbox>
+          />
         ))}
       </Stack>
       <Divider marginTop="1rem" />
@@ -139,7 +159,7 @@ export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
           <PopoverTrigger>
             <IconButton
               colorScheme="secondary"
-              aria-label="Search database"
+              aria-label="Open todos"
               icon={<FcTodoList />}
               onClick={handleSideBar}
             />

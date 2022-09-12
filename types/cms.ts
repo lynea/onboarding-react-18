@@ -35,7 +35,7 @@ export interface ChaptersData {
 }
 
 export interface ChaptersAttributes {
-  title: string;
+  title?: string;
   index: number;
   createdAt: string;
   updatedAt: string;

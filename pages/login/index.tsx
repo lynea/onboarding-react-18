@@ -66,7 +66,6 @@ const Login: NextPage = () => {
                   id="username"
                   type="password"
                   onChange={(e) => setPassword(e.target.value)}
-                  onKeyPress={handleSubmit}
                 />
                 <FormHelperText>
                   {" "}

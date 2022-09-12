@@ -18,18 +18,23 @@ const TeamBadge = dynamic<TeamBadgeProps>(
 );
 import { getTeams } from "../../requests/teams";
 import { getChapters } from "../../requests/chapters";
+import { useRecoilState } from "recoil";
+import { todosState } from "../../state/todos";
 
 type TeamspageProps = {
   teams: TeamAttributes[];
 };
 
 const Teams: NextPage<TeamspageProps> = ({ teams }) => {
+  const [todos, setTodos] = useRecoilState(todosState);
+
   const [selectedTeam, setSelectedTeam] = useState<string | undefined>(
     undefined
   );
   const [description, setDescription] = useState<string | undefined>();
 
   const handleTeamClick = (id: string) => {
+    //for now we reset todos todos user should be tied to a pre-selected team in the future
     setSelectedTeam(id);
   };
 
@@ -96,6 +101,7 @@ const Teams: NextPage<TeamspageProps> = ({ teams }) => {
           <GridItem colStart={5} colEnd={9}>
             <Link href={`/onboarding/${selectedTeam}?chapter=1&step=1`}>
               <Button
+                onClick={() => setTodos([])}
                 w="100%"
                 size="lg"
                 fontWeight="bold"

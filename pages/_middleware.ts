@@ -11,6 +11,8 @@ export function middleware(req: NextRequest, ev: NextFetchEvent) {
 
   const desiredPassword = process.env.PASSWORD;
 
+  console.log(`${password} vs ${desiredPassword}`);
+
   if (
     password !== desiredPassword &&
     !isApiRoute &&

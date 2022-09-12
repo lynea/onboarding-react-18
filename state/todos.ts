@@ -15,12 +15,14 @@ const todosState = atom({
 });
 
 const todoInfo = selector({
-  key: "infoValue",
+  key: "todosInfo",
   get: ({ get }) => ({
-    total: get(todosState).length,
-    completed: get(todosState).filter((todo: Todo) => todo.completed).length,
-    notCompleted: get(todosState).filter((todo: Todo) => !todo.completed)
-      .length,
+    total: get(todosState).length || [],
+    completed:
+      get(todosState)
+        .filter((todo: Todo) => todo.completed)
+        .map((todo: Todo) => todo.id) || [],
+    notCompleted: get(todosState).filter((todo: Todo) => !todo.completed) || [],
   }),
 });
 
