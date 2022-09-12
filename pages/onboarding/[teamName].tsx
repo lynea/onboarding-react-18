@@ -82,8 +82,9 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
   );
 
   //remove the global chapters
-  let chapters: ChaptersAttributes[] | undefined = stepperUtils.getAttributes(
-    currentTeam?.chapters?.data ?? []
+
+  const [chapters, setChapters] = useState<ChaptersAttributes[] | undefined>(
+    stepperUtils.getAttributes(currentTeam?.chapters?.data ?? [])
   );
 
   useEffect(() => {
@@ -109,13 +110,12 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
           );
         }
 
-        console.log(stepsWithTodos, "setting to ");
-
         chapter.steps.data = stepsWithTodos;
       }
 
-      chapters =
+      const filteredChapters =
         chapters.filter((chapter) => chapter.steps.data.length > 0) || [];
+      setChapters(filteredChapters);
     }
   }, [hasSeenAllSteps, todoInfoState]);
 
@@ -208,12 +208,6 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
       }
     );
   };
-
-  console.log(currentChapterInfo, "currentChapterInfo.steps.data");
-  console.log(
-    todoInfoState.notCompleted.length,
-    "todoInfoState.notCompleted.length"
-  );
 
   return (
     <div>

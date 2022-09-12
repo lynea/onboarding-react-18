@@ -4,7 +4,6 @@ import {
   Button,
   Box,
   Progress,
-  Text,
   useTheme,
 } from "@chakra-ui/react";
 import React, { FunctionComponent } from "react";
@@ -21,8 +20,6 @@ export const Stepper: FunctionComponent<StepperProps> = ({
   stepCount,
   chapterCount,
 }) => {
-  const theme = useTheme();
-  const [hasCompleted, setHasCompleted] = useRecoilState(hasCompletedState);
   const todoInfoState = useRecoilValue(todoInfo);
   const [hasSeenAllSteps, setHasSeenAllSteps] =
     useRecoilState(hasSeenAllStepsState);
@@ -66,9 +63,6 @@ export const Stepper: FunctionComponent<StepperProps> = ({
           Previous step
         </Button>
         <Box w="80%" margin="0 4rem" textAlign="center">
-          {/* <Text fontSize="xl" marginBottom="1rem" color="white">
-          <strong>step: </strong> {`${stepCount.current}/${stepCount.total}`}
-        </Text> */}
           <Progress
             value={(stepCount.current / stepCount.total) * 100}
             bg="gray.100"
@@ -83,9 +77,9 @@ export const Stepper: FunctionComponent<StepperProps> = ({
           color="gray.100"
           variant="solid"
           onClick={handleNextClick}
-          disabled={hasCompleted && isLastStepAndChapter}
+          disabled={hasSeenAllSteps && isLastStepAndChapter}
         >
-          {isLastStepAndChapter && hasCompleted ? "finish" : "Next step"}
+          Next step
         </Button>
       </Flex>
     </GridItem>
