@@ -28,7 +28,6 @@ import { Todo, todoInfo, todosState } from "../../state/todos";
 import { Chapter } from "../../components/chapter";
 import { Stepper } from "../../components/stepper";
 import {
-  Chapters,
   ChaptersAttributes,
   GetChapterResponse,
   GetTeamsResult,
@@ -53,19 +52,12 @@ type HomepageProps = {
 const Home: NextPage<HomepageProps> = ({ teams }) => {
   const router = useRouter();
   const [localTodos, setLocalTodos] = useRecoilState(todosState);
-  const [hasCompleted, setHasCompleted] = useRecoilState(hasCompletedState);
   const [hasSeen, setHasSeen] = useRecoilState(hasSeenState);
   const todoInfoState = useRecoilValue(todoInfo);
   const [hasSeenAllSteps, setHasSeenAllSteps] =
     useRecoilState(hasSeenAllStepsState);
 
   const { step, chapter, teamName } = router.query;
-
-  console.log(todoInfoState.total.length, " todoInfoState.total.length");
-  console.log(
-    todoInfoState?.notCompleted?.length,
-    "  todoInfoState?.notCompleted?.length"
-  );
 
   const numStep = Number(step);
   const numChapter = Number(chapter);
@@ -248,7 +240,7 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
               templateColumns="repeat(12, 1fr)"
               templateRows="100px 100px 100px 100px 100px"
             >
-              <GridItem colStart={2} colEnd={12} rowStart={1} rowEnd={6}>
+              <GridItem colStart={2} colEnd={12} rowStart={1} rowEnd={12}>
                 {hasSeenAllSteps && todoInfoState.notCompleted.length < 1 ? (
                   <Box
                     display="flex"
@@ -259,6 +251,7 @@ const Home: NextPage<HomepageProps> = ({ teams }) => {
                       as="h1"
                       size="4xl"
                       marginBottom="6rem"
+                      lineHeight="8rem"
                       bgGradient="linear(to-l, #9A00A8, #FF93D4)"
                       fontWeight="extrabold"
                       bgClip="text"

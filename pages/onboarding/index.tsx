@@ -17,9 +17,9 @@ const TeamBadge = dynamic<TeamBadgeProps>(
   { ssr: false }
 );
 import { getTeams } from "../../requests/teams";
-import { getChapters } from "../../requests/chapters";
 import { useRecoilState } from "recoil";
 import { todosState } from "../../state/todos";
+import { hasSeenAllSteps } from "../../state/user";
 
 type TeamspageProps = {
   teams: TeamAttributes[];
@@ -27,6 +27,7 @@ type TeamspageProps = {
 
 const Teams: NextPage<TeamspageProps> = ({ teams }) => {
   const [todos, setTodos] = useRecoilState(todosState);
+  const [hasSeen, setHasSeen] = useRecoilState(hasSeenAllSteps);
 
   const [selectedTeam, setSelectedTeam] = useState<string | undefined>(
     undefined
@@ -34,6 +35,9 @@ const Teams: NextPage<TeamspageProps> = ({ teams }) => {
   const [description, setDescription] = useState<string | undefined>();
 
   const handleTeamClick = (id: string) => {
+    setTodos([]);
+    setHasSeen(false);
+
     //for now we reset todos todos user should be tied to a pre-selected team in the future
     setSelectedTeam(id);
   };
