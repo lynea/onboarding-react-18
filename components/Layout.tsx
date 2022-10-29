@@ -1,5 +1,7 @@
 import {
   Box,
+  Button,
+  ButtonGroup,
   Checkbox,
   Divider,
   Drawer,
@@ -12,59 +14,81 @@ import {
   Grid,
   Heading,
   IconButton,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
   Stack,
 } from "@chakra-ui/react";
 
-import { FunctionComponent, ReactNode, useState } from "react";
+import React, {
+  FunctionComponent,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 import { FcTodoList } from "react-icons/fc";
 import { useRecoilState } from "recoil";
-import { todosState } from "../state/todos";
+import { Todo, todosState } from "../state/todos";
+import { hasSeen as hasSeenState } from "../state/user";
+import Link from "next/link";
+
+type TodoProps = Todo & {
+  handleCheck: (e: any) => void;
+};
+
+const TodoItem: FunctionComponent<TodoProps> = ({
+  completed,
+  title,
+  id,
+  handleCheck,
+}) => (
+  <Box>
+    <Checkbox
+      value={id}
+      onChange={handleCheck}
+      colorScheme="green"
+      defaultChecked={completed}
+    >
+      {title}
+    </Checkbox>
+  </Box>
+);
 
 const TodoSelection = () => {
   const [todos, setTodos] = useRecoilState(todosState);
 
-  // const isAlreadyCompleted = (id:string) => todos.find((localTodo) => localTodo.id === id)?.completed;
-
   const handleCheck = (e: any) => {
-    if (e.target.checked) {
-      const newLocalTodos = [...todos];
+    const updatedTodos = JSON.parse(JSON.stringify([...todos]));
 
-      for (const todo of newLocalTodos) {
-        if (todo.id === e.target.value) {
-          setTodos(newLocalTodos);
-          break;
-        }
+    for (const todo of updatedTodos) {
+      if (todo.id === e.target.value) {
+        todo.completed = !todo.completed;
+        break;
       }
-    } else {
-      const updatedTodos = JSON.parse(JSON.stringify([...todos]));
-
-      for (const todo of updatedTodos) {
-        if (todo.id === e.target.value) {
-          todo.completed = !todo.completed;
-          break;
-        }
-      }
-
-      setTodos(updatedTodos);
     }
+
+    setTodos(updatedTodos);
   };
   return (
     <>
       <Heading as="h5" size="sm" marginBottom="1rem">
-        Getting started
+        Your todos
       </Heading>
       <Stack spacing={5} direction="column">
         {todos.length === 0 && <> no todos yet </>}
-        {todos.map((todo) => (
-          <Checkbox
-            value={todo.id}
-            onChange={handleCheck}
-            colorScheme="green"
-            defaultChecked={todo.completed}
+        {todos.map((todo: Todo) => (
+          <TodoItem
+            completed={todo.completed}
+            handleCheck={handleCheck}
+            title={todo.title}
+            id={todo.id}
             key={todo.id}
-          >
-            {todo.title}
-          </Checkbox>
+          />
         ))}
       </Stack>
       <Divider marginTop="1rem" />
@@ -101,14 +125,14 @@ type LayoutProps = {
 
 export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
   const [sidePanelIsOpen, setSidepanelIsOpen] = useState(false);
+  const [hasSeen, setHasSeen] = useRecoilState(hasSeenState);
   const handleSideBar = () => {
     setSidepanelIsOpen(!sidePanelIsOpen);
   };
 
   return (
-    <Box minHeight="100vh" width="1700px">
+    <Box minHeight="100vh" width="1700px" display="flex" alignItems="center">
       <Box
-        boxShadow="md"
         padding=" 0 2rem"
         w="100%"
         h="5rem"
@@ -120,18 +144,38 @@ export const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
         display="flex"
       >
         <Heading as="h2" size="lg" color="gray.100">
-          Mijn onboarding
+          <Link href="/">Mijn onboarding</Link>
         </Heading>
-        <IconButton
-          colorScheme="whiteAlpha"
-          aria-label="Search database"
-          icon={<FcTodoList />}
-          onClick={handleSideBar}
-        />
+
+        <Popover
+          returnFocusOnClose={false}
+          isOpen={hasSeen.modal && !hasSeen.todoTip}
+          onClose={() => {
+            setHasSeen({ modal: true, todoTip: true });
+          }}
+          placement="top"
+          closeOnBlur={false}
+        >
+          <PopoverTrigger>
+            <IconButton
+              colorScheme="secondary"
+              aria-label="Open todos"
+              icon={<FcTodoList />}
+              onClick={handleSideBar}
+            />
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverHeader fontWeight="semibold">Tip:</PopoverHeader>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverBody>you can view your todos here</PopoverBody>
+          </PopoverContent>
+        </Popover>
       </Box>
 
       <SidePanel isOpen={sidePanelIsOpen} onClose={handleSideBar} />
       <Grid
+        rowGap={0}
         marginTop="7rem"
         w="100%"
         templateColumns="repeat(12, 1fr)"

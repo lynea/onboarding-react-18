@@ -1,8 +1,9 @@
-import { GridItem, Heading } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Heading } from "@chakra-ui/react";
 import React, { FunctionComponent } from "react";
 import { StepAttributes } from "../../types/cms";
 import { Step } from "../step";
 import * as stepperUtils from "../../utils/stepper";
+import Image from "next/image";
 
 import { ChapterProps } from "./types";
 
@@ -10,36 +11,44 @@ export const Chapter: FunctionComponent<ChapterProps> = ({
   title,
   steps,
   currentStep,
+  currentChapter,
+  imageMode,
 }) => {
   const stepsAttributes: StepAttributes[] = stepperUtils.getAttributes(
     steps?.data
   );
-  const stepInfo = stepsAttributes.at(currentStep - 1);
+  const stepInfo = stepsAttributes?.at(currentStep - 1);
+
+  // if the user completed his yourney
+  // show a popup notifying that we will only show steps with open remaining todos
+  // filter out all chapters that are completed or dont have todos
+  // filter out all steps that have open todos
+  // we get all completed steps (for this chapter)
 
   return (
-    <GridItem
-      colSpan={12}
+    <Box
       margin="0 2rem"
-      border="1px solid gray"
       boxShadow="md"
       color="gray.100"
-      p="6"
+      p={imageMode ? "2rem 2rem 2rem 20rem" : "2rem 2rem 2rem 2rem"}
+      bg="secondary.800"
       rounded="md"
       display="flex"
-      justifyContent="space-between"
+      justifyContent="flex-start"
       flexDirection="column"
+      h="100%"
     >
       <Heading
         as="h1"
         size="2xl"
         marginBottom="2.5rem"
-        bgGradient="linear(to-l, #7928CA, #FF0080)"
+        bgGradient="linear(to-l, #9A00A8, #FF93D4)"
         fontWeight="extrabold"
         bgClip="text"
       >
-        {title}
+        Chapter {currentChapter} : {title}
       </Heading>
       {stepInfo && <Step {...stepInfo} />}
-    </GridItem>
+    </Box>
   );
 };

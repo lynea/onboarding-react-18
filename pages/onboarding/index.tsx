@@ -17,18 +17,28 @@ const TeamBadge = dynamic<TeamBadgeProps>(
   { ssr: false }
 );
 import { getTeams } from "../../requests/teams";
+import { useRecoilState } from "recoil";
+import { todosState } from "../../state/todos";
+import { hasSeenAllSteps } from "../../state/user";
 
 type TeamspageProps = {
   teams: TeamAttributes[];
 };
 
 const Teams: NextPage<TeamspageProps> = ({ teams }) => {
+  const [todos, setTodos] = useRecoilState(todosState);
+  const [hasSeen, setHasSeen] = useRecoilState(hasSeenAllSteps);
+
   const [selectedTeam, setSelectedTeam] = useState<string | undefined>(
     undefined
   );
   const [description, setDescription] = useState<string | undefined>();
 
   const handleTeamClick = (id: string) => {
+    setTodos([]);
+    setHasSeen(false);
+
+    //for now we reset todos todos user should be tied to a pre-selected team in the future
     setSelectedTeam(id);
   };
 
@@ -70,7 +80,7 @@ const Teams: NextPage<TeamspageProps> = ({ teams }) => {
           {teams.map((team) => (
             <TeamBadge
               key={team.slug}
-              image={`${process.env.NEXT_PUBLIC_STRAPI_BASE_URL}${team.badgeImage.data.attributes.formats.thumbnail.url}`}
+              image={`http://127.0.0.1:1337${team.badgeImage.data.attributes.formats.thumbnail.url}`}
               name={team.name}
               selected={selectedTeam === team.name}
               onClick={handleTeamClick}
@@ -95,15 +105,16 @@ const Teams: NextPage<TeamspageProps> = ({ teams }) => {
           <GridItem colStart={5} colEnd={9}>
             <Link href={`/onboarding/${selectedTeam}?chapter=1&step=1`}>
               <Button
+                onClick={() => setTodos([])}
                 w="100%"
                 size="lg"
                 fontWeight="bold"
                 fontSize="4xl"
                 py="2.5rem"
                 color="#F2F2F2"
-                bgColor="#7928CA"
+                colorScheme="secondary"
                 disabled={!selectedTeam}
-                _hover={{ bg: "#7928CA" }}
+                // _hover={{ bg: "#7928CA" }}
               >
                 continue
               </Button>

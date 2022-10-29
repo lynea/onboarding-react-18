@@ -5,7 +5,7 @@ const query = stringify(
   {
     populate: {
       chapters: {
-        populate: ["steps", "steps.todos"],
+        populate: ["steps", "steps.todos", "steps.image"],
       },
       badgeImage: {
         populate: "*",
