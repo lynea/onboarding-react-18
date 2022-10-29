@@ -24,13 +24,13 @@ import React, { useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { hasSeen as hasSeenState } from "../state/user";
 
-import dynamic from "next/dynamic";
 import { useRecoilState } from "recoil";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
 const Spline = dynamic(() => import("@splinetool/react-spline"), {
   ssr: false,
 });
-// const Spline = React.lazy(() => import("@splinetool/react-spline"));
 
 const Home: NextPage = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -94,17 +94,8 @@ const Home: NextPage = () => {
             </Heading>
           </GridItem>
           <GridItem colStart={3} colEnd={11} height="60rem" position="relative">
-            {/* <Suspense fallback={<>loading,....</>}>
-              <Spline
-                scene="https://prod.spline.design/8-XX3fWBmbcS9if7/scene.splinecode"
-                onLoad={() => {
-                  setIsloading(false);
-                  setIsOpen(true);
-                }}
-              />
-            </Suspense> */}
-
-            <Image src="/homepage-banner.png" layout="fill" />
+            <Spline scene="https://prod.spline.design/8-XX3fWBmbcS9if7/scene.splinecode" />{" "}
+            {/* <Image src="/homepage-banner.png" layout="fill" /> */}
           </GridItem>
           <GridItem colStart={5} colEnd={9}>
             <Link href="/onboarding">

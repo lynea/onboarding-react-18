@@ -3,15 +3,11 @@ import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 export function middleware(req: NextRequest, ev: NextFetchEvent) {
   const url = req.nextUrl.clone();
 
-  const password = req.cookies.onboarding_auth;
-
-  //if the request comes from /login we should let it pass
+  const password = req.cookies.get("onboarding_auth");
 
   const isApiRoute = url.pathname.includes("/api");
 
   const desiredPassword = process.env.PASSWORD;
-
-  console.log(`${password} vs ${desiredPassword}`);
 
   if (
     password !== desiredPassword &&
@@ -30,3 +26,7 @@ export function middleware(req: NextRequest, ev: NextFetchEvent) {
     return NextResponse.redirect(url);
   }
 }
+
+export const config = {
+  matcher: "/login",
+};
